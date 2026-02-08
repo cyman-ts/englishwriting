@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>句子煉金術師 | The Phrase Alchemist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --card-bg: #ffffff;
+            --primary: #2c3e50;
+            --accent: #e67e22; /* Keith often uses orange/warm colors */
+            --success: #27ae60;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #eee;
+        }
+
+        h1 {
+            font-family: 'Noto Serif TC', serif;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            height: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Challenge Section */
+        .challenge-box {
+            background-color: #f8f9fa;
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        .label {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #95a5a6;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .boring-sentence {
+            font-size: 1.2em;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        /* Input Section */
+        .input-area {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 1em;
+            resize: none;
+            height: 80px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background-color: #34495e;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-next {
+            background-color: var(--accent);
+            display: none; /* Hidden initially */
+            margin-top: 20px;
+        }
+
+        .btn-next:hover {
+            background-color: #d35400;
+        }
+
+        /* Result Section */
+        .result-box {
+            margin-top: 30px;
+            display: none; /* Hidden initially */
+            animation: fadeIn 0.5s ease;
+            text-align: left;
+            background: #fff8e1; /* Light yellow like old paper */
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px dashed var(--accent);
+        }
+
+        .keith-says {
+            font-family: 'Patrick Hand', cursive; /* Handwritten style */
+            font-size: 1.3em;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .explanation {
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: bold;
+            background-color: rgba(230, 126, 34, 0.1);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #bdc3c7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>句子煉金術師</h1>
+        <div class="subtitle">Life is a game. Level up your English.</div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Game Content -->
+        <div id="gameContent">
+            
+            <div class="challenge-box">
+                <span class="label">Boring Sentence (Level 1)</span>
+                <div class="boring-sentence" id="boringSentence">Loading...</div>
+            </div>
+
+            <div class="input-area">
+                <span class="label">Your Turn (Try to upgrade it!)</span>
+                <textarea id="userInput" placeholder="Type your version here... (Don't worry about mistakes!)"></textarea>
+            </div>
+
+            <button class="btn" id="polishBtn" onclick="polishSentence()">✨ Polish it!</button>
+
+            <!-- Result -->
+            <div class="result-box" id="resultBox">
+                <span class="label">Keith-Style Upgrade (Level 99)</span>
+                <span class="keith-says" id="keithVersion">...</span>
+                <div class="explanation" id="explanation">...</div>
+            </div>
+
+            <button class="btn btn-next" id="nextBtn" onclick="nextCard()">Next Challenge ➡️</button>
+
+        </div>
+
+    </div>
+
+    <div class="footer">Based on Keith English Academy Principles</div>
+
+    <script>
+        // Database of Sentences (Keith-style: Idioms & Phrasal Verbs)
+        const challenges = [
+            {
+                boring: "I am very busy today.",
+                keith: "I'm swamped.",
+                alt: "I'm tied up at the moment.",
+                explanation: "Don't just say 'busy'. <span class='highlight'>Swamped</span> means you have too much work, like you are stuck in a swamp (沼澤)! <span class='highlight'>Tied up</span> is also great for business contexts."
+            },
+            {
+                boring: "I am very happy.",
+                keith: "I'm over the moon!",
+                alt: "I'm on cloud nine.",
+                explanation: "Native speakers love idioms for emotions. <span class='highlight'>Over the moon</span> gives a much stronger visual image of happiness than just 'very happy'."
+            },
+            {
+                boring: "I woke up late this morning.",
+                keith: "I slept in.",
+                alt: "I overslept.",
+                explanation: "There is a difference! <span class='highlight'>Slept in</span> means you did it intentionally (maybe on a Sunday). <span class='highlight'>Overslept</span> means it was a mistake and you are late for work!"
+            },
+            {
+                boring: "I don't know the answer.",
+                keith: "I haven't the foggiest idea.",
+                alt: "Beats me.",
+                explanation: "If you want to sound British, <span class='highlight'>haven't the foggiest</span> is perfect. It implies your mind is full of fog. 'Beats me' is more casual/American."
+            },
+            {
+                boring: "I met my friend by chance.",
+                keith: "I bumped into an old friend.",
+                alt: "I ran into him.",
+                explanation: "We rarely say 'meet by chance'. We say we <span class='highlight'>bumped into</span> or <span class='highlight'>ran into</span> someone. It sounds much more natural and dynamic."
+            },
+            {
+                boring: "She is very rich.",
+                keith: "She's rolling in it.",
+                alt: "She's well off.",
+                explanation: "<span class='highlight'>Rolling in it</span> (rolling in money) is a very visual idiom. 'Well off' is a polite way to say rich."
+            },
+            {
+                boring: "I want to go to sleep.",
+                keith: "I'm going to hit the sack.",
+                alt: "I'm turning in.",
+                explanation: "<span class='highlight'>Hit the sack</span> is a classic idiom for going to bed. It makes your English sound less robotic."
+            },
+            {
+                boring: "It is raining heavily.",
+                keith: "It's pouring down.",
+                alt: "It's bucketing down.",
+                explanation: "In the UK, we talk about rain a lot! <span class='highlight'>Pouring</span> or <span class='highlight'>Bucketing</span> captures the intensity much better than just 'heavily'."
+            }
+        ];
+
+        let currentLevel = 0;
+        
+        // Initial Load
+        window.onload = function() {
+            loadCard(currentLevel);
+        }
+
+        function loadCard(index) {
+            // Reset UI
+            document.getElementById('userInput').value = "";
+            document.getElementById('resultBox').style.display = "none";
+            document.getElementById('nextBtn').style.display = "none";
+            document.getElementById('polishBtn').style.display = "inline-block";
+            
+            // Load Data
+            const card = challenges[index];
+            document.getElementById('boringSentence').innerText = card.boring;
+            
+            // Update Progress
+            const progress = ((index) / challenges.length) * 100;
+            document.getElementById('progressBar').style.width = progress + "%";
+        }
+
+        function polishSentence() {
+            const card = challenges[currentLevel];
+            const userText = document.getElementById('userInput').value;
+
+            // Show Result
+            const resultBox = document.getElementById('resultBox');
+            const keithVer = document.getElementById('keithVersion');
+            const explain = document.getElementById('explanation');
+
+            keithVer.innerHTML = `✨ ${card.keith}`;
+            explain.innerHTML = `${card.explanation}<br><br><strong>Alternative:</strong> ${card.alt}`;
+            
+            resultBox.style.display = "block";
+            
+            // Switch Buttons
+            document.getElementById('polishBtn').style.display = "none";
+            document.getElementById('nextBtn').style.display = "inline-block";
+        }
+
+        function nextCard() {
+            currentLevel++;
+            if (currentLevel >= challenges.length) {
+                // Game Over / Win
+                document.getElementById('gameContent').innerHTML = `
+                    <div style="padding:40px;">
+                        <h2>🎉 Level Complete!</h2>
+                        <p>You've polished all the phrases.</p>
+                        <p>Remember: Don't just speak English, <strong>play with it!</strong></p>
+                        <button class="btn" onclick="location.reload()">Play Again</button>
+                    </div>
+                `;
+                document.getElementById('progressBar').style.width = "100%";
+            } else {
+                loadCard(currentLevel);
+            }
+        }
+
+    </script>
+</body>
+</html>
